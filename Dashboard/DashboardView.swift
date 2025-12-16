@@ -7,6 +7,29 @@
 
 import SwiftUI
 
+private struct NavGauge: View {
+    let percent: Double // 0...1
+    var body: some View {
+        ZStack {
+            // Outer subtle ring
+            Circle()
+                .stroke(Color.primary.opacity(0.08), lineWidth: 2)
+            // Background track (full circle)
+            Circle()
+                .inset(by: 4)
+                .stroke(Color.primary.opacity(0.15), lineWidth: 6)
+            // Foreground progress arc
+            Circle()
+                .inset(by: 4)
+                .trim(from: 0, to: max(0, min(1, percent)))
+                .stroke(Color.blue, style: StrokeStyle(lineWidth: 6, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+        }
+        .frame(width: 36, height: 36)
+        .drawingGroup()
+    }
+}
+
 struct DashboardView: View {
     @EnvironmentObject var stats: QuizStats
 
@@ -41,9 +64,7 @@ struct DashboardView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 24) {
-                WelcomeHeader(name: "Luke")
-
-                SectionTitle("Overview")
+            
                 OverviewGrid(
                     quizzesPassed: stats.quizzesPassed,
                     quizzesTaken: stats.quizzesTaken,
@@ -83,6 +104,28 @@ struct DashboardView: View {
             reloadDashboardData()
         }
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                ZStack {
+                    Image(systemName: "person.fill")
+                        .foregroundColor(.primary)
+                }
+                .frame(width: 32, height: 32)
+                .accessibilityLabel("Profile")
+            }
+            ToolbarItem(placement: .principal) {
+                VStack(spacing: 2) {
+                    Text("WELCOME BACK")
+                        .font(.system(size: 11, weight: .bold))
+                        .opacity(0.7)
+                    Text("Luke")
+                        .font(.system(size: 20, weight: .heavy))
+                }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavGauge(percent: stats.quizzesTaken > 0 ? Double(stats.quizzesPassed) / Double(max(1, stats.quizzesTaken)) : 0)
+            }
+        }
     }
 
     private func reloadDashboardData() {
@@ -141,32 +184,9 @@ private func SectionTitle(_ title: String, trailing: AnyView? = nil) -> some Vie
     .padding(.top, 4)
 }
 
-private struct WelcomeHeader: View {
-    let name: String
-    var body: some View {
-        HStack(spacing: 12) {
-            Circle()
-                .fill(Color.white.opacity(0.15))
-                .frame(width: 44, height: 44)
-                .overlay(Image(systemName: "person.fill").foregroundColor(.white))
-            VStack(alignment: .leading, spacing: 4) {
-                Text("WELCOME BACK")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(.white.opacity(0.6))
-                Text(name)
-                    .font(.system(size: 22, weight: .heavy))
-                    .foregroundColor(.white)
-            }
-            Spacer()
-            Circle()
-                .fill(Color.green)
-                .frame(width: 10, height: 10)
-        }
-        .padding(.vertical, 8)
-    }
-}
-
 private struct OverviewGrid: View {
+    @EnvironmentObject var stats: QuizStats
+
     let quizzesPassed: Int
     let quizzesTaken: Int
     let totalSeenQuestions: Int
@@ -186,10 +206,25 @@ private struct OverviewGrid: View {
 
     var body: some View {
         LazyVGrid(columns: columns, spacing: 12) {
-            MetricCard(title: "Readiness", value: "\(readinessPercent)", icon: "gauge", color: .blue, suffix: "%")
-            MetricCard(title: "Passed", value: "\(quizzesPassed)", icon: "checkmark.seal.fill", color: .green, suffix: "quizzes")
-            MetricCard(title: "Seen", value: "\(seenPercent)", icon: "eye", color: .blue, suffix: "%", progress: Double(seenPercent) / 100.0)
-            MetricCard(title: "Streak", value: "\(streakDays)", icon: "flame.fill", color: .orange, suffix: "days")
+            NavigationLink { StatsView().environmentObject(stats) } label: {
+                MetricCard(title: "Readiness", value: "\(readinessPercent)", icon: "gauge", color: .blue, suffix: "%")
+                    .id("overview.readiness")
+            }.buttonStyle(.plain)
+
+            NavigationLink { StatsView().environmentObject(stats) } label: {
+                MetricCard(title: "Passed", value: "\(quizzesPassed)", icon: "checkmark.seal.fill", color: .green, suffix: "quizzes")
+                    .id("overview.passed")
+            }.buttonStyle(.plain)
+
+            NavigationLink { StatsView().environmentObject(stats) } label: {
+                MetricCard(title: "Seen", value: "\(seenPercent)", icon: "eye", color: .blue, suffix: "%", progress: Double(seenPercent) / 100.0)
+                    .id("overview.seen")
+            }.buttonStyle(.plain)
+
+            NavigationLink { StatsView().environmentObject(stats) } label: {
+                MetricCard(title: "Streak", value: "\(streakDays)", icon: "flame.fill", color: .orange, suffix: "days")
+                    .id("overview.streak")
+            }.buttonStyle(.plain)
         }
     }
 }
@@ -250,11 +285,13 @@ private struct StartQuizGrid: View {
                 QuizView(mode: .exam)
             } label: {
                 StartCard(
+                    id: "exam",
                     title: "Exam Sim",
                     subtitle: "Full length test mode",
                     icon: "timer",
                     color: .blue
                 )
+                .id("exam")
             }
             .buttonStyle(.plain)
 
@@ -262,11 +299,13 @@ private struct StartQuizGrid: View {
                 QuizView(mode: .quick10)
             } label: {
                 StartCard(
+                    id: "quick10",
                     title: "Quick Quiz",
                     subtitle: "10 random questions",
                     icon: "bolt.fill",
                     color: .green
                 )
+                .id("quick10")
             }
             .buttonStyle(.plain)
 
@@ -274,23 +313,27 @@ private struct StartQuizGrid: View {
                 QuizView(mode: .reviewWrong)
             } label: {
                 StartCard(
+                    id: "reviewWrong",
                     title: "Errors Retry",
                     subtitle: "Practice mistakes",
                     icon: "arrow.triangle.2.circlepath",
                     color: .orange
                 )
+                .id("reviewWrong")
             }
             .buttonStyle(.plain)
 
             NavigationLink {
-                CategoriesListView()
+                ChapterSelectionView()
             } label: {
                 StartCard(
+                    id: "byChapter",
                     title: "By Chapter",
                     subtitle: "Select topic",
                     icon: "book.closed.fill",
                     color: .purple
                 )
+                .id("byChapter")
             }
             .buttonStyle(.plain)
         }
@@ -298,6 +341,7 @@ private struct StartQuizGrid: View {
 }
 
 private struct StartCard: View {
+    let id: String
     let title: String
     let subtitle: String
     let icon: String
@@ -333,7 +377,7 @@ private struct HistoryCards: View {
     let sessions: [QuizSessionSummary]
     var body: some View {
         VStack(spacing: 12) {
-            ForEach(Array(sessions.prefix(5))) { s in
+            ForEach(Array(sessions.prefix(5)), id: \.id) { s in
                 NavigationLink {
                     QuizSessionDetailView(session: s)
                 } label: {
@@ -375,10 +419,8 @@ private struct HistoryCard: View {
                     .foregroundColor(.white.opacity(0.7))
             }
             Spacer()
-            Image(systemName: "chevron.right")
-                .foregroundColor(.white.opacity(0.4))
         }
-        .padding(14)
+        .padding(8)
         .background(
             RoundedRectangle(cornerRadius: 18)
                 .fill(Color.white.opacity(0.06))
@@ -488,11 +530,27 @@ private struct ChapterProgressCard: View {
             }
             .frame(height: 10)
 
-            HStack {
-                Badge(text: "\(right) Right", color: .green)
-                Badge(text: "\(wrong) Wrong", color: .red)
+            HStack(spacing: 16) {
+                HStack(spacing: 8) {
+                    Circle()
+                        .fill(Color.green)
+                        .frame(width: 10, height: 10)
+                    Text("\(right) Right")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.8))
+                }
+                HStack(spacing: 8) {
+                    Circle()
+                        .fill(Color.red)
+                        .frame(width: 10, height: 10)
+                    Text("\(wrong) Wrong")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundColor(.white.opacity(0.8))
+                }
                 Spacer()
-                Badge(text: "\(left) Left", color: .white.opacity(0.4))
+                Text("\(left) Left")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.white.opacity(0.6))
             }
         }
         .padding(14)
@@ -525,26 +583,6 @@ private struct Badge: View {
     }
 }
 
-// Placeholder list for "View All" history navigation
-private struct HistoryListView: View {
-    let sessions: [QuizSessionSummary]
-    var body: some View {
-        List {
-            ForEach(sessions) { s in
-                NavigationLink(destination: QuizSessionDetailView(session: s)) {
-                    VStack(alignment: .leading) {
-                        Text(s.mode)
-                        Text("\(s.correctAnswers)/\(s.totalQuestions) • \(s.points) pts")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                }
-            }
-        }
-        .navigationTitle("All Sessions")
-    }
-}
-
 // Simple categories list for "By Chapter" card
 private struct CategoriesListView: View {
     @State private var categories: [Category] = []
@@ -560,3 +598,4 @@ private struct CategoriesListView: View {
         .navigationTitle("Chapters")
     }
 }
+

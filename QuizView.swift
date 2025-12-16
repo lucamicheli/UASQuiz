@@ -84,7 +84,7 @@ struct QuizView: View {
                             viewModel.tick()
                         }
 
-                    // Barra fissa in basso con solo il bottone principale
+                    // Barra fissa in basso con solo il bottone principale e bookmark a sinistra
                     bottomFixedBar
                 }
             }
@@ -123,14 +123,6 @@ struct QuizView: View {
                         .font(.system(size: 13, weight: .heavy))
                         .padding(.vertical, 8)
                         .padding(.horizontal, 12)
-                        .background(
-                            Capsule()
-                                .strokeBorder(Color.blue.opacity(0.6), lineWidth: 1)
-                                .background(
-                                    Capsule()
-                                        .fill(Color.white.opacity(0.06))
-                                )
-                        )
                         .foregroundColor(.white)
                 }
             }
@@ -246,32 +238,32 @@ struct QuizView: View {
         .safeAreaInset(edge: .top) {
             Color.clear.frame(height: 8)
         }
-        .overlay(alignment: .bottomTrailing) {
-            if let currentQuestion = currentQuestion {
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        Button {
-                            toggleFavorite(for: currentQuestion.id)
-                        } label: {
-                            Image(systemName: favoriteIDs.contains(currentQuestion.id) ? "bookmark.fill" : "bookmark")
-                                .foregroundColor(.white.opacity(0.9))
-                                .padding()
-                                .background(Circle().fill(Color.white.opacity(0.06)))
-                        }
-                    }
-                    .padding(.trailing, 16)
-                }
-            }
-        }
     }
 
     // MARK: - Barra fissa in basso
 
     private var bottomFixedBar: some View {
-        VStack(spacing: 12) {
-            // Bottone "Check Answer" / "Next"
+        HStack(spacing: 12) {
+            if let q = currentQuestion {
+                Button {
+                    toggleFavorite(for: q.id)
+                } label: {
+                    Image(systemName: favoriteIDs.contains(q.id) ? "bookmark.fill" : "bookmark")
+                        .font(.system(size: 20, weight: .semibold))
+                        .foregroundColor(.white)
+                        .frame(width: 52, height: 52)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .fill(Color.white.opacity(0.06))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .stroke(Color.white.opacity(0.12), lineWidth: 1)
+                        )
+                }
+                .buttonStyle(.plain)
+            }
+
             Button {
                 handlePrimaryButtonTap()
             } label: {
@@ -283,12 +275,12 @@ struct QuizView: View {
                     .background(Color.blue)
                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
             }
-            .padding(.horizontal, 20)
-            .padding(.bottom, 16)
-            .padding(.top, 8)
             .disabled(viewModel.selectedIndex == nil && !showFeedback)
             .opacity(viewModel.selectedIndex == nil && !showFeedback ? 0.5 : 1)
         }
+        .padding(.horizontal, 20)
+        .padding(.bottom, 16)
+        .padding(.top, 8)
     }
 
     private var primaryButtonTitle: String {
@@ -327,6 +319,9 @@ struct QuizView: View {
                viewModel.currentIndex < viewModel.questions.count {
                 let currentQuestion = viewModel.questions[viewModel.currentIndex]
                 wasCorrect = (selectedIndex == currentQuestion.correctIndex)
+                if !wasCorrect {
+                    Haptics.wrongAnswer()
+                }
                 // Build the collapsed, ordered set of indices for feedback display
                 let correctIdx = currentQuestion.correctIndex
                 if wasCorrect {
@@ -464,13 +459,17 @@ struct OptionButton: View {
             .padding(.vertical, 18)
             .background(
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(Color.white.opacity(0.06))
+                    .fill((highlightColor ?? Color.white.opacity(0.06)).opacity(highlightColor == nil ? 1 : 0.25))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .stroke(isSelected ? Color.blue : Color.white.opacity(0.12), lineWidth: 2)
+                    .stroke(
+                        highlightColor ?? (isSelected ? Color.blue : Color.white.opacity(0.12)),
+                        lineWidth: 2
+                    )
             )
         }
         .buttonStyle(.plain)
     }
 }
+

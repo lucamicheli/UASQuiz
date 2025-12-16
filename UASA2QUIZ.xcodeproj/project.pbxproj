@@ -18,7 +18,6 @@
 		ACE4BA672EF0D368000E5121 /* Contents.json in Resources */ = {isa = PBXBuildFile; fileRef = ACE4BA452EF0D368000E5121 /* Contents.json */; };
 		ACE4BA682EF0D368000E5121 /* correct.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = ACE4BA482EF0D368000E5121 /* correct.mp3 */; };
 		ACE4BA692EF0D368000E5121 /* 58.png in Resources */ = {isa = PBXBuildFile; fileRef = ACE4BA3E2EF0D368000E5121 /* 58.png */; };
-		ACE4BA6A2EF0D368000E5121 /* questions.json in Resources */ = {isa = PBXBuildFile; fileRef = ACE4BA552EF0D368000E5121 /* questions.json */; };
 		ACE4BA6B2EF0D368000E5121 /* 80.png in Resources */ = {isa = PBXBuildFile; fileRef = ACE4BA402EF0D368000E5121 /* 80.png */; };
 		ACE4BA6C2EF0D368000E5121 /* 180.png in Resources */ = {isa = PBXBuildFile; fileRef = ACE4BA432EF0D368000E5121 /* 180.png */; };
 		ACE4BA6D2EF0D368000E5121 /* 60.png in Resources */ = {isa = PBXBuildFile; fileRef = ACE4BA3F2EF0D368000E5121 /* 60.png */; };
@@ -29,13 +28,16 @@
 		ACE4BA722EF0D368000E5121 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE4BA522EF0D368000E5121 /* DatabaseManager.swift */; };
 		ACE4BA732EF0D368000E5121 /* ChapterQuestionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE4BA4D2EF0D368000E5121 /* ChapterQuestionsView.swift */; };
 		ACE4BA742EF0D368000E5121 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE4BA5C2EF0D368000E5121 /* SoundManager.swift */; };
-		ACE4BA752EF0D368000E5121 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE4BA5B2EF0D368000E5121 /* ResultView.swift */; };
 		ACE4BA762EF0D368000E5121 /* Question.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE4BA542EF0D368000E5121 /* Question.swift */; };
-		ACE4BA772EF0D368000E5121 /* NewQuizView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE4BA532EF0D368000E5121 /* NewQuizView.swift */; };
 		ACE4BA782EF0D368000E5121 /* QuizViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE4BA592EF0D368000E5121 /* QuizViewModel.swift */; };
 		ACE4BA792EF0D368000E5121 /* QuizView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE4BA582EF0D368000E5121 /* QuizView.swift */; };
 		ACE4BA7A2EF0D368000E5121 /* UASA2QUIZApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE4BA5D2EF0D368000E5121 /* UASA2QUIZApp.swift */; };
 		ACE4BA7B2EF0D368000E5121 /* QuizSessionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE4BA562EF0D368000E5121 /* QuizSessionDetailView.swift */; };
+		ACE4BA7D2EF0D9E7000E5121 /* HistoryListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE4BA7C2EF0D9E7000E5121 /* HistoryListView.swift */; };
+		ACE4BA7F2EF0D9ED000E5121 /* HistoryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE4BA7E2EF0D9ED000E5121 /* HistoryRow.swift */; };
+		ACE4BA812EF0DD3E000E5121 /* Haptics.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE4BA802EF0DD3E000E5121 /* Haptics.swift */; };
+		ACE4BA832EF15111000E5121 /* ChapterSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE4BA822EF15111000E5121 /* ChapterSelectionView.swift */; };
+		ACE4BA852EF15328000E5121 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACE4BA842EF15328000E5121 /* StatsView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -57,17 +59,19 @@
 		ACE4BA4E2EF0D368000E5121 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		ACE4BA502EF0D368000E5121 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		ACE4BA522EF0D368000E5121 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
-		ACE4BA532EF0D368000E5121 /* NewQuizView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewQuizView.swift; sourceTree = "<group>"; };
 		ACE4BA542EF0D368000E5121 /* Question.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Question.swift; sourceTree = "<group>"; };
-		ACE4BA552EF0D368000E5121 /* questions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = questions.json; sourceTree = "<group>"; };
 		ACE4BA562EF0D368000E5121 /* QuizSessionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizSessionDetailView.swift; sourceTree = "<group>"; };
 		ACE4BA572EF0D368000E5121 /* QuizStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizStats.swift; sourceTree = "<group>"; };
 		ACE4BA582EF0D368000E5121 /* QuizView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizView.swift; sourceTree = "<group>"; };
 		ACE4BA592EF0D368000E5121 /* QuizViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizViewModel.swift; sourceTree = "<group>"; };
 		ACE4BA5A2EF0D368000E5121 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		ACE4BA5B2EF0D368000E5121 /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
 		ACE4BA5C2EF0D368000E5121 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
 		ACE4BA5D2EF0D368000E5121 /* UASA2QUIZApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UASA2QUIZApp.swift; sourceTree = "<group>"; };
+		ACE4BA7C2EF0D9E7000E5121 /* HistoryListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryListView.swift; sourceTree = "<group>"; };
+		ACE4BA7E2EF0D9ED000E5121 /* HistoryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryRow.swift; sourceTree = "<group>"; };
+		ACE4BA802EF0DD3E000E5121 /* Haptics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Haptics.swift; sourceTree = "<group>"; };
+		ACE4BA822EF15111000E5121 /* ChapterSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChapterSelectionView.swift; sourceTree = "<group>"; };
+		ACE4BA842EF15328000E5121 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		ACF1226D2EDE5C2200F6EC0C /* UASA2QUIZ.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UASA2QUIZ.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -105,7 +109,6 @@
 				ACE4BA482EF0D368000E5121 /* correct.mp3 */,
 				ACE4BA492EF0D368000E5121 /* error.mp3 */,
 				ACE4BA4A2EF0D368000E5121 /* questions.sqlite */,
-				ACE4BA4B2EF0D368000E5121 /* QuizResultsView.swift */,
 			);
 			path = assets;
 			sourceTree = "<group>";
@@ -114,6 +117,9 @@
 			isa = PBXGroup;
 			children = (
 				ACE4BA502EF0D368000E5121 /* DashboardView.swift */,
+				ACE4BA7C2EF0D9E7000E5121 /* HistoryListView.swift */,
+				ACE4BA7E2EF0D9ED000E5121 /* HistoryRow.swift */,
+				ACE4BA822EF15111000E5121 /* ChapterSelectionView.swift */,
 			);
 			path = Dashboard;
 			sourceTree = "<group>";
@@ -128,17 +134,17 @@
 				ACE4BA4E2EF0D368000E5121 /* ContentView.swift */,
 				ACE4BA512EF0D368000E5121 /* Dashboard */,
 				ACE4BA522EF0D368000E5121 /* DatabaseManager.swift */,
-				ACE4BA532EF0D368000E5121 /* NewQuizView.swift */,
 				ACE4BA542EF0D368000E5121 /* Question.swift */,
-				ACE4BA552EF0D368000E5121 /* questions.json */,
+				ACE4BA842EF15328000E5121 /* StatsView.swift */,
 				ACE4BA562EF0D368000E5121 /* QuizSessionDetailView.swift */,
+				ACE4BA4B2EF0D368000E5121 /* QuizResultsView.swift */,
 				ACE4BA572EF0D368000E5121 /* QuizStats.swift */,
 				ACE4BA582EF0D368000E5121 /* QuizView.swift */,
 				ACE4BA592EF0D368000E5121 /* QuizViewModel.swift */,
 				ACE4BA5A2EF0D368000E5121 /* README.md */,
-				ACE4BA5B2EF0D368000E5121 /* ResultView.swift */,
 				ACE4BA5C2EF0D368000E5121 /* SoundManager.swift */,
 				ACE4BA5D2EF0D368000E5121 /* UASA2QUIZApp.swift */,
+				ACE4BA802EF0DD3E000E5121 /* Haptics.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -222,7 +228,6 @@
 				ACE4BA672EF0D368000E5121 /* Contents.json in Resources */,
 				ACE4BA682EF0D368000E5121 /* correct.mp3 in Resources */,
 				ACE4BA692EF0D368000E5121 /* 58.png in Resources */,
-				ACE4BA6A2EF0D368000E5121 /* questions.json in Resources */,
 				ACE4BA6B2EF0D368000E5121 /* 80.png in Resources */,
 				ACE4BA6C2EF0D368000E5121 /* 180.png in Resources */,
 				ACE4BA6D2EF0D368000E5121 /* 60.png in Resources */,
@@ -236,18 +241,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ACE4BA7F2EF0D9ED000E5121 /* HistoryRow.swift in Sources */,
 				ACE4BA6E2EF0D368000E5121 /* QuizStats.swift in Sources */,
 				ACE4BA6F2EF0D368000E5121 /* ContentView.swift in Sources */,
 				ACE4BA702EF0D368000E5121 /* QuizResultsView.swift in Sources */,
+				ACE4BA812EF0DD3E000E5121 /* Haptics.swift in Sources */,
 				ACE4BA712EF0D368000E5121 /* DashboardView.swift in Sources */,
 				ACE4BA722EF0D368000E5121 /* DatabaseManager.swift in Sources */,
 				ACE4BA732EF0D368000E5121 /* ChapterQuestionsView.swift in Sources */,
 				ACE4BA742EF0D368000E5121 /* SoundManager.swift in Sources */,
-				ACE4BA752EF0D368000E5121 /* ResultView.swift in Sources */,
 				ACE4BA762EF0D368000E5121 /* Question.swift in Sources */,
-				ACE4BA772EF0D368000E5121 /* NewQuizView.swift in Sources */,
+				ACE4BA7D2EF0D9E7000E5121 /* HistoryListView.swift in Sources */,
 				ACE4BA782EF0D368000E5121 /* QuizViewModel.swift in Sources */,
+				ACE4BA852EF15328000E5121 /* StatsView.swift in Sources */,
 				ACE4BA792EF0D368000E5121 /* QuizView.swift in Sources */,
+				ACE4BA832EF15111000E5121 /* ChapterSelectionView.swift in Sources */,
 				ACE4BA7A2EF0D368000E5121 /* UASA2QUIZApp.swift in Sources */,
 				ACE4BA7B2EF0D368000E5121 /* QuizSessionDetailView.swift in Sources */,
 			);

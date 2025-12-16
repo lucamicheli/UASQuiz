@@ -26,6 +26,10 @@ struct QuizResultsView: View {
     let onDone: () -> Void
 
     @State private var filter: Filter = .all
+    @State private var headerCollapseProgress: CGFloat = 0
+    
+    private let passThreshold: Int = 75
+    private var didPass: Bool { scorePercent >= passThreshold }
 
     enum Filter { case all, incorrect, correct }
 
@@ -39,6 +43,7 @@ struct QuizResultsView: View {
         self.onRetake = onRetake
         self.onDone = onDone
     }
+    // Call Haptics.wrongAnswer() from the answering flow (e.g., in QuizView when a selected answer is wrong)
 
     private var filteredItems: [ResultItem] {
         switch filter {
@@ -49,22 +54,38 @@ struct QuizResultsView: View {
     }
 
     var body: some View {
+        ZStack {
         VStack(spacing: 0) {
             ScrollView {
+                GeometryReader { proxy in
+                    Color.clear
+                        .preference(key: OffsetKey.self, value: proxy.frame(in: .named("resultsScroll")).minY)
+                }
+                .frame(height: 0)
                 VStack(alignment: .leading, spacing: 16) {
                     scoreRing
                     statsRow
-                    filterBar
                     ForEach(filteredItems) { item in
                         AnswerCard(item: item)
                     }
-                    Spacer(minLength: 80)
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 12)
+                .padding(.bottom, 20)
+                .onPreferenceChange(OffsetKey.self) { value in
+                    let threshold: CGFloat = 140 // approximate height where the ring is considered collapsed
+                    let progress = min(max(-value / threshold, 0), 1)
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        headerCollapseProgress = progress
+                    }
+                }
             }
-
-            bottomBar
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+            .coordinateSpace(name: "resultsScroll")
+        }
+        if didPass {
+            ConfettiView().allowsHitTesting(false)
+        }
         }
         .navigationTitle("")
         .toolbar {
@@ -73,12 +94,25 @@ struct QuizResultsView: View {
                     Text(title)
                         .font(.system(size: 18, weight: .heavy))
                         .foregroundColor(.white)
+                        .opacity(1 - headerCollapseProgress)
                     Text("Exam Results")
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundColor(.white.opacity(0.7))
+                        .opacity(1 - headerCollapseProgress)
                 }
             }
+            ToolbarItem(placement: .bottomBar) {
+                Picker("Filter", selection: $filter) {
+                    Text("All").tag(Filter.all)
+                    Text("Incorrect").tag(Filter.incorrect)
+                    Text("Correct").tag(Filter.correct)
+                }
+                .pickerStyle(.segmented)
+                .frame(maxWidth: .infinity)
+            }
         }
+        .toolbarBackground(.ultraThinMaterial, for: .bottomBar)
+        .toolbarBackground(.visible, for: .bottomBar)
         .background(Color(red: 0.08, green: 0.11, blue: 0.15).ignoresSafeArea())
     }
 
@@ -88,10 +122,7 @@ struct QuizResultsView: View {
             Circle()
                 .trim(from: 0, to: max(0, min(Double(scorePercent) / 100.0, 1.0)))
                 .stroke(
-                    AngularGradient(
-                        gradient: Gradient(colors: [Color(red: 0.20, green: 0.55, blue: 1.0), Color(red: 0.20, green: 0.55, blue: 1.0).opacity(0.7), Color(red: 0.20, green: 0.55, blue: 1.0)]),
-                        center: .center
-                    ),
+                    didPass ? Color.green : Color.red,
                     style: StrokeStyle(lineWidth: 18, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
@@ -109,6 +140,8 @@ struct QuizResultsView: View {
         .frame(maxWidth: .infinity)
         .padding(.top, 8)
         .padding(.bottom, 12)
+        .scaleEffect(1 - 0.1 * headerCollapseProgress)
+        .opacity(1 - 0.6 * headerCollapseProgress)
     }
 
     private var statsRow: some View {
@@ -119,54 +152,37 @@ struct QuizResultsView: View {
         }
     }
 
-    private var filterBar: some View {
-        HStack(spacing: 8) {
-            FilterChip(title: "All (\(items.count))", isSelected: filter == .all) { filter = .all }
-            FilterChip(title: "Incorrect (\(wrongCount))", isSelected: filter == .incorrect) { filter = .incorrect }
-            FilterChip(title: "Correct (\(correctCount))", isSelected: filter == .correct) { filter = .correct }
-        }
-        .padding(.top, 8)
-    }
+//    private var filterBar: some View {
+//        HStack(spacing: 8) {
+//            FilterChip(title: "All (\(items.count))", isSelected: filter == .all) { filter = .all }
+//            FilterChip(title: "Incorrect (\(wrongCount))", isSelected: filter == .incorrect) { filter = .incorrect }
+//            FilterChip(title: "Correct (\(correctCount))", isSelected: filter == .correct) { filter = .correct }
+//        }
+//        .padding(.top, 8)
+//    }
 
-    private var bottomBar: some View {
-        ZStack {
-            Color.clear
-            HStack {
-                Button(action: onDone) {
-                    Text("Done")
-                        .font(.system(size: 16, weight: .heavy))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(Color(red: 0.20, green: 0.55, blue: 1.0))
-                        )
-                }
-                .buttonStyle(.plain)
-                Button(action: onRetake) {
-                    Text("Retake")
-                        .font(.system(size: 16, weight: .heavy))
-                        .foregroundColor(Color(red: 0.20, green: 0.55, blue: 1.0))
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(Color.white.opacity(0.05))
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.white.opacity(0.10), lineWidth: 1)
-                        )
-                }
-                .buttonStyle(.plain)
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 8)
-            .padding(.bottom, 12)
-        }
-        .background(Color.clear)
-    }
+//    private var glassTabBar: some View {
+//        HStack(spacing: 12) {
+//            GlassTabItem(title: "All", isSelected: filter == .all) { filter = .all }
+//            GlassTabItem(title: "Incorrect", isSelected: filter == .incorrect) { filter = .incorrect }
+//            GlassTabItem(title: "Correct", isSelected: filter == .correct) { filter = .correct }
+//        }
+//        .padding(10)
+//        .background(
+//            RoundedRectangle(cornerRadius: 22, style: .continuous)
+//                .fill(Color.white.opacity(0.08))
+//                .background(
+//                    RoundedRectangle(cornerRadius: 22, style: .continuous)
+//                        .fill(Color.white.opacity(0.03))
+//                        .blur(radius: 10)
+//                )
+//                .overlay(
+//                    RoundedRectangle(cornerRadius: 22, style: .continuous)
+//                        .stroke(Color.white.opacity(0.15), lineWidth: 1)
+//                )
+//        )
+//        .shadow(color: Color.black.opacity(0.4), radius: 12, x: 0, y: 6)
+//    }
 }
 
 private struct StatPill: View {
@@ -225,6 +241,8 @@ private struct FilterChip: View {
         .buttonStyle(.plain)
     }
 }
+
+// Removed GlassTabItem View as per instructions
 
 private struct AnswerCard: View {
     let item: ResultItem
@@ -349,6 +367,61 @@ private struct AnswerCard: View {
             )
     }
 }
+
+private struct ConfettiView: View {
+    @State private var animate = false
+    var body: some View {
+        GeometryReader { geo in
+            ZStack {
+                ForEach(0..<60, id: \.self) { i in
+                    let x = CGFloat.random(in: 0...geo.size.width)
+                    let size = CGFloat.random(in: 6...12)
+                    let duration = Double.random(in: 1.2...2.0)
+                    let delay = Double.random(in: 0...0.4)
+                    ConfettiPiece()
+                        .frame(width: size, height: size)
+                        .position(x: x, y: animate ? geo.size.height + 20 : -20)
+                        .rotationEffect(.degrees(animate ? 360 : 0))
+                        .animation(.easeIn(duration: duration).delay(delay), value: animate)
+                }
+            }
+            .onAppear { animate = true }
+        }
+        .ignoresSafeArea()
+        .transition(.opacity)
+    }
+}
+
+private struct ConfettiPiece: View {
+    private let color: Color = [
+        .green, .blue, .red, .yellow, .orange, .purple, .pink
+    ].randomElement() ?? .green
+    var body: some View {
+        RoundedRectangle(cornerRadius: 2)
+            .fill(color.opacity(0.9))
+    }
+}
+
+private struct CompactScoreRing: View {
+    let percent: Int
+    var body: some View {
+        ZStack {
+            Circle().stroke(Color.white.opacity(0.25), lineWidth: 3)
+            Circle()
+                .trim(from: 0, to: max(0, min(Double(percent) / 100.0, 1.0)))
+                .stroke(Color(red: 0.20, green: 0.55, blue: 1.0), style: StrokeStyle(lineWidth: 3, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+        }
+    }
+}
+
+private struct OffsetKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
 
 #Preview {
     // Minimal preview with fake data if Question type is available
